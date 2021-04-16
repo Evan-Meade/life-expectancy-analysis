@@ -1,0 +1,116 @@
+---
+title: "Life Expectancy Project"
+author: "Abraca-Data Team"
+date: "4/15/2021"
+output: html_document
+---
+### Importing Libraries
+```{r message = FALSE}
+library(tidyverse)
+library(corrplot)
+library(janitor)
+library(gganimate)
+library(ggthemes)
+library(scales)
+```
+
+### Importing Data
+```{r message = FALSE}
+life <- read_csv("Life Expectancy Data.csv") %>%
+  clean_names() %>%
+  select(country, year, status, life_expectancy, population,  alcohol, percentage_expenditure,
+         bmi, gdp, hiv_aids, thinness_1_19_years, thinness_5_9_years, income_composition_of_resources, schooling)
+```
+
+### Preprocessing
+```{r}
+# Checking the percentage of missing values
+na_pct <-sapply(life, function(x) sum(length(which(is.na(x))))/100)
+na_pct <- data.frame(na_pct)
+
+# Dropping all missing values in the data frame
+life = life %>% drop_na()
+```
+
+### EDA
+```{r fig.height = 5, fig.width = 5}
+corrplot(cor(life[ , -c(1:3)]),
+         type="upper",
+         method = "number", 
+         addCoefasPercent = FALSE)
+```
+
+```{r}
+
+asia_lists <- c("Afghanistan", "Bahrain", "Bangladesh", "Cambodia", "China", "India", "Indonesia", "Iran",
+                "Iraq", "Israel", "Japan", "Jordan", "Korea", "Kuwait", "Lebanon", "Malaysia", "Mongolia",
+                "Myanmar", "Nepal", "Oman", "Pakistan", "Philippines", "Saudi Arabia",  "Singapore", 
+                "Sri Lanka", "Syria", "Taiwan", "Thailand", "Vietnam", "Yemen", "Fiji",
+                "United Arab Emirates", "Qatar", "Maldives", "Syrian Arab Republic", "Tajikistan", 
+                "Uzbekistan", "Brunei Darussalam", "Azerbaijan", "Bhutan", "Timor-Leste", "Kazakhstan",
+                "Armenia", "Turkmenistan")
+
+americas_lists <- c("Argentina", "Bolivia", "Brazil", "Canada", "Chile", "Colombia", "Costa Rica", "Cuba",
+                    "Dominican Republic", "Ecuador", "El Salvador", "Guatemala", "Haiti", "Honduras",
+                    "Jamaica", "Mexico", "Nicaragua", "Panama", "Paraguay", "Peru", "Puerto Rico",
+                    "Trinidad and Tobago", "United States", "Uruguay", "Venezuela", "Barbados", "Grenada",
+                    "Belize", "Guyana", "Suriname", "Antigua and Barbuda")
+
+africa_lists <- c("Algeria", "Angola", "Benin", "Botswana", "Burkina Faso","Burundi", "Cameroon", 
+                  "Central African Republic","Chad","Comoros","Congo, Dem. Rep.", "Congo, Rep.", 
+                  "Cote d' Ivoire", "Djibouti, Egypt", "Equatorial Guinea", "Eritrea", "Ethiopia",
+                  "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia",
+                  "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", 
+                  "Mozambique", "Namibia", "Niger", "Nigeria", "Reunion", "Rwanda",
+                  "Sao Tome and Principe", "Senegal", "Sierra Leone", "Somalia", "South Africa", "Sudan",
+                  "Swaziland", "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe", "Cabo Verde",
+                  "Seychelles", "Djibouti")
+
+europe_lists <- c("Albania", "Austria",  "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia",
+                  "Czech Republic", "Denmark", "Finland", "France", "Germany", "Greece", "Hungary" ,
+                  "Iceland", "Ireland", "Italy", "Montenegro", "Netherlands", "Norway", "Poland",
+                  "Portugal", "Romania", "Serbia", "Slovak Republic", "Slovenia", "Spain", "Sweden",
+                  "Switzerland", "Turkey", "United Kingdom", "Georgia", "Russian Federation", "Ukraine",
+                  "Luxembourg", "Lithuania", "Malta", "Latvia", "Estonia", "Cyprus")
+
+oceania_lists <- c("Australia", "New Zealand", "Tonga", "Samoa", "Solomon Islands", "Belarus",
+                   "Papua New Guinea", "Kiribati", "Vanuatu")
+
+life <- life %>%
+  mutate(continents = ifelse(life$country %in% asia_lists, 'Asia',
+                             ifelse(life$country %in% americas_lists, 'Americas',
+                                    ifelse(life$country %in% africa_lists, 'Africa',
+                                           ifelse(life$country %in% europe_lists, 'Europe',
+                                                  ifelse(life$country %in% oceania_lists, 'Oceania', NA))))))
+
+life$continents <- as.factor(life$continents)
+```
+
+#### Animation Graph
+```{r}
+graph_1 <- life %>%
+  ggplot(mapping = aes(x = gdp, y = life_expectancy, size = population, color = continents)) +
+  geom_point(alpha = 0.7, stroke = 0) +
+  scale_size(range = c(2,14), guide = "none") +
+  scale_x_log10(labels = scales::dollar) +
+  theme_fivethirtyeight() +
+  labs(title = "Life Expectancy vs \nGDP Per Capita by Continent",
+       x = "Income per Person (GDP / capita in USD)",
+       y = "Life Expectancy",
+       color = "Continent") +
+  theme(axis.title = element_text(),
+        text = element_text(family = "Verdana"),
+        legend.text = element_text(size = 10)) +
+  scale_color_brewer(palette = "Set2")
+
+graph_1.animation <- graph_1 +
+  transition_time(year) +
+  labs(subtitle = "Year: {frame_time}") +
+  shadow_wake(wake_length = 0.1)
+
+graph_1.animation
+```
+
+```{r}
+anim_save('test graph.gif')
+```
