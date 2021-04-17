@@ -25,8 +25,21 @@ predictors <- c("Schooling", "GDP", "Alcohol", "BMI", "percentage.expenditure",
                 "thinness.5.9.years", "thinness.10.19.years")
 cols <- c("Country", "Year", "Status", "Life.expectancy", predictors)
 
+# Removing rows with any NA values
+data <- data[-which(rowSums(is.na(data)) > 0), ]
+
+# Writing cleaned data to a separate .csv file
+write.csv(data, "life_CLEAN.csv", row.names = FALSE)
+
+
+
+
+
+
+
+
 # Removing rows which do not include life expectancy
-data <- data[-which(is.na(data$Life.expectancy)), ]
+# data <- data[-which(is.na(data$Life.expectancy)), ]
 
 
 
@@ -69,7 +82,7 @@ na.approx(x, x = x$Year)
 
 
 
-# data$na.count <- rowSums(is.na(data))
+data$na.count <- rowSums(is.na(data))
 # hist(data$na.count)
 # table(data$na.count)
 
