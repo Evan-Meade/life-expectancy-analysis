@@ -1,0 +1,104 @@
+---
+title: "Evan Analysis"
+author: "Evan Meade"
+date: "4/26/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Imports
+
+```{r imports}
+library(ggplot2)
+
+data <- read.csv("life_CLEAN.csv")
+str(data)
+```
+
+## Temporal Analysis
+
+```{r over_time}
+year_averages <- aggregate(Life.expectancy ~ Year, data = data, FUN = mean)
+
+ggplot(data = year_averages) +
+  geom_line(mapping = aes(x = Year, y = Life.expectancy))
+
+summary(lm(Life.expectancy ~ Year, data = year_averages))
+```
+
+```{r status_time}
+status_averages <- aggregate(Life.expectancy ~ Year + Status, data = data, FUN = mean)
+
+ggplot(data = status_averages) +
+  geom_line(mapping = aes(x = Year, y = Life.expectancy, color = Status))
+```
+
+```{r status_proxy}
+data$Status.proxy <- as.integer(factor(data$Status, levels = c("Developing",
+                                                               "Developed"),
+                                       labels = c(0, 1))) - 1
+summary(lm(Life.expectancy ~ Status.proxy + Year, data = data))
+```
+
+So clearly country status is a large factor in life expectancy over time. On average, developed countries have life expectancies over 12 years higher than developing countries. Additionally, every year raises the global life expectancy by about a third of a year. These coefficients are highly significant and graphically the trends look relatively constant. If we extrapolate this pattern forwards, that means each person can expect to life on average, 1.5 times as long as the life expectancy when they were born. For people born around 2000, that's about 116 years old.
+
+## Model Fitting
+
+```{r model_fit}
+model <- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
+              percentage.expenditure + Income.composition.of.resources +
+              HIV.AIDS + thinness.5.9.years + thinness.10.19.years, data = data)
+summary(model)
+```
+
+## Over- and Under-Performing Countries
+
+```{r predict}
+data$y.hat <- predict(model, data)
+data$error <- data$Life.expectancy - data$y.hat
+
+country_subset <- c("Norway", "China", "Ghana", "Chile", "Vietnam")
+ggplot(data = data[which(data$Country %in% country_subset), ]) +
+  geom_line(mapping = aes(x = Year, y = error, color = Country))
+```
+
+```{r errors}
+ggplot(data = data) +
+  geom_histogram(mapping = aes(x = error))
+
+ggplot(data = data) +
+  geom_boxplot(mapping = aes(x = as.factor(Year), y = error))
+```
+
+```{r over_under}
+av_error <- aggregate(error ~ Country, data = data, FUN = mean)
+
+ggplot(data = av_error) +
+  geom_histogram(mapping = aes(x = error))
+```
+
+```{r outliers}
+outlier_order <- c(head(order(av_error$error, decreasing = TRUE), 5),
+                   tail(order(av_error$error, decreasing = TRUE), 5))
+av_error$over.rank <- order(av_error$error, decreasing = TRUE)
+outliers <- av_error$Country[outlier_order]
+print(paste0(c("Top Over-perfomers: ", outliers[1:5])))
+print(paste0(c("Top Over-perfomers: ", outliers[10:6])))
+outlier_data <- data[which(data$Country %in% outliers), ]
+
+ggplot(data = outlier_data) +
+  geom_line(mapping = aes(x = Year, y = error, color = Country))
+```
+
+
+
+
+
+
+
+
+
+
