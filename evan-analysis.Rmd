@@ -9,6 +9,19 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Summary
+
+* Developed countries have 12 year higher life expectancies than developing countries, on average
+* Average national life expectancy is increasing at about a third of a year per year 
+* Errors in the 9-parameter model are approximately normal
+* Average errors for each country (averaged over time) are also approximately normal
+* There are outliers over- and under-performing on average over this time period
+
+Next steps:
+
+* Statistically test for significance of these over- and under-performers
+* Try adding Status.proxy and Year as parameters to the model for increased accuracy
+
 ## Imports
 
 ```{r imports}
