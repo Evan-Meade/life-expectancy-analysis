@@ -67,11 +67,13 @@
 <h2>Temporal Analysis</h2>
 <pre class="r"><code>year_averages &lt;- aggregate(Life.expectancy ~ Year, data = data, FUN = mean)
 
-ggplot(data = year_averages) +
-  geom_line(mapping = aes(x = Year, y = Life.expectancy)) +
+ggplot(data = year_averages, mapping = aes(x = Year, y = Life.expectancy)) +
+  geom_line() +
   labs(title = &quot;Average National Life Expectancy Over Time&quot;,
        x = &quot;Year&quot;,
-       y = &quot;Average National Life Expectancy (Years)&quot;)</code></pre>
+       y = &quot;Average National Life Expectancy (Years)&quot;) +
+  stat_smooth(method = &quot;lm&quot;, se = FALSE, linetype = &quot;dashed&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="evan-analysis_files/figure-html/over_time-1.png" width="672" /></p>
 <pre class="r"><code># savefig(&quot;life_expectancy__year.png&quot;)
 
@@ -96,11 +98,14 @@ summary(lm(Life.expectancy ~ Year, data = year_averages))</code></pre>
 ## F-statistic: 45.36 on 1 and 14 DF,  p-value: 9.551e-06</code></pre>
 <pre class="r"><code>status_averages &lt;- aggregate(Life.expectancy ~ Year + Status, data = data, FUN = mean)
 
-ggplot(data = status_averages) +
-  geom_line(mapping = aes(x = Year, y = Life.expectancy, color = Status)) +
+ggplot(data = status_averages, mapping = aes(x = Year, y = Life.expectancy)) +
+  geom_line(mapping = aes(color = Status)) +
   labs(title = &quot;Average National Life Expectancy Over Time, By Development Status&quot;,
        x = &quot;Year&quot;,
-       y = &quot;Average National Life Expectancy (Years)&quot;)</code></pre>
+       y = &quot;Average National Life Expectancy (Years)&quot;) +
+  stat_smooth(mapping = aes(group = Status), method = &quot;lm&quot;, se = FALSE,
+              color = &quot;black&quot;, size = 0.5, linetype = &quot;dashed&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="evan-analysis_files/figure-html/status_time-1.png" width="672" /></p>
 <pre class="r"><code>data$Status.proxy &lt;- as.integer(factor(data$Status, levels = c(&quot;Developing&quot;,
                                                                &quot;Developed&quot;),

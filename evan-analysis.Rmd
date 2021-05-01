@@ -38,11 +38,12 @@ data
 ```{r over_time}
 year_averages <- aggregate(Life.expectancy ~ Year, data = data, FUN = mean)
 
-ggplot(data = year_averages) +
-  geom_line(mapping = aes(x = Year, y = Life.expectancy)) +
+ggplot(data = year_averages, mapping = aes(x = Year, y = Life.expectancy)) +
+  geom_line() +
   labs(title = "Average National Life Expectancy Over Time",
        x = "Year",
-       y = "Average National Life Expectancy (Years)")
+       y = "Average National Life Expectancy (Years)") +
+  stat_smooth(method = "lm", se = FALSE, linetype = "dashed")
 # savefig("life_expectancy__year.png")
 
 summary(lm(Life.expectancy ~ Year, data = year_averages))
@@ -51,11 +52,13 @@ summary(lm(Life.expectancy ~ Year, data = year_averages))
 ```{r status_time}
 status_averages <- aggregate(Life.expectancy ~ Year + Status, data = data, FUN = mean)
 
-ggplot(data = status_averages) +
-  geom_line(mapping = aes(x = Year, y = Life.expectancy, color = Status)) +
+ggplot(data = status_averages, mapping = aes(x = Year, y = Life.expectancy)) +
+  geom_line(mapping = aes(color = Status)) +
   labs(title = "Average National Life Expectancy Over Time, By Development Status",
        x = "Year",
-       y = "Average National Life Expectancy (Years)")
+       y = "Average National Life Expectancy (Years)") +
+  stat_smooth(mapping = aes(group = Status), method = "lm", se = FALSE,
+              color = "black", size = 0.5, linetype = "dashed")
 ```
 
 ```{r status_proxy}
