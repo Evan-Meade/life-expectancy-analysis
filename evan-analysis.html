@@ -27,6 +27,16 @@
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre><code>## 
+## Attaching package: &#39;car&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     recode</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     some</code></pre>
 <pre class="r"><code>data &lt;- read_csv(&quot;life_CLEAN.csv&quot;)</code></pre>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -166,6 +176,88 @@ summary(model)</code></pre>
 ## Residual standard error: 4.522 on 2301 degrees of freedom
 ## Multiple R-squared:  0.7837, Adjusted R-squared:  0.7829 
 ## F-statistic: 926.5 on 9 and 2301 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># Refining that to significance
+vif(model)</code></pre>
+<pre><code>##                       Schooling                             GDP 
+##                        3.436165                        6.955887 
+##                         Alcohol                             BMI 
+##                        1.607482                        1.780604 
+##          percentage.expenditure Income.composition.of.resources 
+##                        6.750474                        2.933128 
+##                        HIV.AIDS              thinness.5.9.years 
+##                        1.114526                        7.666612 
+##            thinness.10.19.years 
+##                        7.677358</code></pre>
+<pre class="r"><code>model &lt;- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
+              percentage.expenditure + Income.composition.of.resources +
+              HIV.AIDS + thinness.10.19.years, data = data)
+summary(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Life.expectancy ~ Schooling + GDP + Alcohol + BMI + 
+##     percentage.expenditure + Income.composition.of.resources + 
+##     HIV.AIDS + thinness.10.19.years, data = data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -27.5810  -2.5434  -0.0193   2.6472  25.5195 
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      4.976e+01  4.958e-01 100.361  &lt; 2e-16 ***
+## Schooling                        1.078e+00  5.206e-02  20.702  &lt; 2e-16 ***
+## GDP                              4.461e-05  1.709e-05   2.611 0.009097 ** 
+## Alcohol                         -1.003e-01  2.960e-02  -3.387 0.000718 ***
+## BMI                              5.541e-02  6.285e-03   8.816  &lt; 2e-16 ***
+## percentage.expenditure           1.773e-04  1.111e-04   1.596 0.110696    
+## Income.composition.of.resources  9.945e+00  7.496e-01  13.267  &lt; 2e-16 ***
+## HIV.AIDS                        -6.614e-01  1.767e-02 -37.436  &lt; 2e-16 ***
+## thinness.10.19.years            -1.174e-01  2.616e-02  -4.489 7.52e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.522 on 2302 degrees of freedom
+## Multiple R-squared:  0.7837, Adjusted R-squared:  0.7829 
+## F-statistic:  1042 on 8 and 2302 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>vif(model)</code></pre>
+<pre><code>##                       Schooling                             GDP 
+##                        3.436138                        6.953307 
+##                         Alcohol                             BMI 
+##                        1.606380                        1.752098 
+##          percentage.expenditure Income.composition.of.resources 
+##                        6.750474                        2.932035 
+##                        HIV.AIDS            thinness.10.19.years 
+##                        1.113418                        1.585696</code></pre>
+<pre class="r"><code>model &lt;- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
+              Income.composition.of.resources +
+              HIV.AIDS + thinness.10.19.years, data = data)
+summary(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Life.expectancy ~ Schooling + GDP + Alcohol + BMI + 
+##     Income.composition.of.resources + HIV.AIDS + thinness.10.19.years, 
+##     data = data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -27.5862  -2.5642  -0.0208   2.6258  25.4375 
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      4.976e+01  4.959e-01 100.344  &lt; 2e-16 ***
+## Schooling                        1.078e+00  5.208e-02  20.710  &lt; 2e-16 ***
+## GDP                              6.913e-05  7.475e-06   9.247  &lt; 2e-16 ***
+## Alcohol                         -9.308e-02  2.927e-02  -3.180  0.00149 ** 
+## BMI                              5.495e-02  6.281e-03   8.749  &lt; 2e-16 ***
+## Income.composition.of.resources  9.872e+00  7.485e-01  13.189  &lt; 2e-16 ***
+## HIV.AIDS                        -6.614e-01  1.767e-02 -37.426  &lt; 2e-16 ***
+## thinness.10.19.years            -1.186e-01  2.616e-02  -4.533 6.11e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.523 on 2303 degrees of freedom
+## Multiple R-squared:  0.7834, Adjusted R-squared:  0.7828 
+## F-statistic:  1190 on 7 and 2303 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div id="over--and-under-performing-countries" class="section level2">
 <h2>Over- and Under-Performing Countries</h2>
@@ -209,16 +301,16 @@ av_error &lt;- data %&gt;%
 <pre><code>## # A tibble: 43 x 5
 ##    Country                count total_error mean_error    p_val
 ##    &lt;chr&gt;                  &lt;int&gt;       &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
-##  1 Sierra Leone              15      -226.      -15.1  2.02e-38
-##  2 Angola                    15      -181.      -12.1  1.91e-25
-##  3 Antigua and Barbuda       15       149.        9.94 8.16e-18
-##  4 Nigeria                   15      -114.       -7.58 4.15e-11
-##  5 Swaziland                 15       112.        7.48 7.32e-11
-##  6 Kazakhstan                15      -112.       -7.45 8.60e-11
-##  7 Maldives                  15       105.        6.98 1.12e- 9
-##  8 Bosnia and Herzegovina    15       102.        6.81 2.68e- 9
-##  9 Russian Federation        15       -99.4      -6.63 6.87e- 9
-## 10 Togo                      15       -95.9      -6.39 2.18e- 8
+##  1 Sierra Leone              15      -226.      -15.0  3.19e-38
+##  2 Angola                    15      -182.      -12.1  1.29e-25
+##  3 Antigua and Barbuda       15       148.        9.89 1.24e-17
+##  4 Nigeria                   15      -115.       -7.64 3.10e-11
+##  5 Swaziland                 15       113.        7.51 6.49e-11
+##  6 Kazakhstan                15      -113.       -7.51 6.51e-11
+##  7 Maldives                  15       105.        7.03 8.62e-10
+##  8 Bosnia and Herzegovina    15       102.        6.82 2.67e- 9
+##  9 Russian Federation        15      -101.       -6.75 3.82e- 9
+## 10 Togo                      15       -95.3      -6.36 2.62e- 8
 ## # … with 33 more rows</code></pre>
 <pre class="r"><code>ggplot(data = av_error) +
   geom_histogram(mapping = aes(x = mean_error)) +

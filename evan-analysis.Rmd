@@ -28,6 +28,7 @@ Next steps:
 
 ```{r imports}
 library(tidyverse)
+library(car)
 
 data <- read_csv("life_CLEAN.csv")
 data
@@ -76,6 +77,19 @@ So clearly country status is a large factor in life expectancy over time. On ave
 model <- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
               percentage.expenditure + Income.composition.of.resources +
               HIV.AIDS + thinness.5.9.years + thinness.10.19.years, data = data)
+summary(model)
+
+# Refining that to significance
+vif(model)
+model <- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
+              percentage.expenditure + Income.composition.of.resources +
+              HIV.AIDS + thinness.10.19.years, data = data)
+summary(model)
+
+vif(model)
+model <- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
+              Income.composition.of.resources +
+              HIV.AIDS + thinness.10.19.years, data = data)
 summary(model)
 ```
 
