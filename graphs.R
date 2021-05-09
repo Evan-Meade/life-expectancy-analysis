@@ -53,8 +53,8 @@ ggplot(data = life, aes(x = Status,y = Life.expectancy, color = Year)) + geom_bo
 
 
 
-fit <- lm(Life.expectancy~Schooling+GDP+Alcohol+BMI+percentage.expenditure+
-             Income.composition.of.resources+HIV.AIDS+thinness.5.9.years+thinness.10.19.years, data = life)
+fit <- lm(Life.expectancy~Schooling+GDP+Alcohol+BMI+Income.composition.of.resources+
+            HIV.AIDS+thinness.10.19.years, data = life)
 summary(fit)
 
 fit0 <- lm(Life.expectancy~Schooling+GDP+Alcohol+BMI+percentage.expenditure+
