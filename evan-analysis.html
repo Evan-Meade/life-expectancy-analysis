@@ -73,6 +73,19 @@
 ## #   Income.composition.of.resources &lt;dbl&gt;, HIV.AIDS &lt;dbl&gt;,
 ## #   thinness.5.9.years &lt;dbl&gt;, thinness.10.19.years &lt;dbl&gt;</code></pre>
 </div>
+<div id="linear-test" class="section level2">
+<h2>Linear Test</h2>
+<pre class="r"><code>data %&gt;% gather(Predictor, x, Schooling:thinness.10.19.years) %&gt;%
+  ggplot() +
+    geom_point(aes(x, Life.expectancy, color = Predictor), alpha = 0.1) +
+    geom_smooth(aes(x, Life.expectancy, color = Predictor),
+                color = &quot;black&quot;, method = &quot;lm&quot;, se = FALSE) +
+    facet_wrap(~ Predictor, scales = &quot;free_x&quot;) +
+    theme(legend.position = &quot;none&quot;) +
+    labs(title = &quot;Scatter Plots of Life Expectancy vs. Each Predictor&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="evan-analysis_files/figure-html/linear_test-1.png" width="672" /></p>
+</div>
 <div id="temporal-analysis" class="section level2">
 <h2>Temporal Analysis</h2>
 <pre class="r"><code>year_averages &lt;- aggregate(Life.expectancy ~ Year, data = data, FUN = mean)
