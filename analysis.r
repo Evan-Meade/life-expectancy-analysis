@@ -46,6 +46,7 @@ write.csv(data, "life_CLEAN.csv", row.names = FALSE)
 
 # Reading in cleaned data
 data <- read_csv("life_CLEAN.csv")
+life <- read_csv("life_CLEAN.csv")
 data
 
 
@@ -78,9 +79,9 @@ data %>% gather(Predictor, x, Schooling:thinness.10.19.years) %>%
 # Question 3 - Alejandro
 # 
 
-model <- lm(life_expectancy ~ 
-              (alcohol + percentage_expenditure + bmi + gdp + schooling + income_composition_of_resources + hiv_aids
-               + thinness_1_19_years + thinness_5_9_years),
+model <- lm(Life.expectancy ~ 
+              (Alcohol + percentage.expenditure + BMI + GDP + Schooling +Income.composition.of.resources + HIV.AIDS
+               + thinness.10.19.years + thinness.5.9.years),
             data = life)
 
 summary(model)
@@ -138,7 +139,7 @@ model <- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
 summary(model)
 
 # Refining that model to significance
-# Removing thinness.5.9.years due to high colinearity colinearity
+# Removing thinness.5.9.years due to high collinearity
 vif(model)
 model <- lm(Life.expectancy ~ Schooling + GDP + Alcohol + BMI +
               percentage.expenditure + Income.composition.of.resources +
@@ -214,7 +215,7 @@ ggplot(data = outlier_data) +
 # Question 6 - Alejandro
 # 
 
-model2 <- lm(life_expectancy ~ (alcohol + bmi + schooling + income_composition_of_resources + hiv_aids +   thinness_1_19_years),
+model2 <- lm(Life.expectancy ~ (Alcohol + BMI + GDP + Schooling + Income.composition.of.resources + HIV.AIDS +   thinness.10.19.years),
              data = life)
 
 summary(model2)
@@ -275,13 +276,13 @@ fit1 <- lm(Life.expectancy~Schooling+GDP+Alcohol+BMI+percentage.expenditure+
 summary(fit1)
 
 # Alejandro
-model_developed <- lm(life_expectancy ~ (alcohol + bmi + schooling +  percentage_expenditure + gdp +income_composition_of_resources  +  hiv_aids + thinness_1_19_years + thinness_5_9_years),
+model_developed <- lm(Life.expectancy ~ (Alcohol + BMI + Schooling +  percentage.expenditure + GDP + Income.composition.of.resources  +  HIV.AIDS + thinness.10.19.years + thinness.5.9.years),
                       data = developed)
 summary(model_developed)
 residualPlot(model_developed, main = "Residual Plot of the Developed Model")
 hist(model_developed$residuals, breaks = 50, col = 'red', main = "Histogram of residuals - Developed Model", xlab = "Residuals Values")
 
-model_developing <- lm(life_expectancy ~ (alcohol + bmi + schooling +  percentage_expenditure + gdp +income_composition_of_resources + hiv_aids +   thinness_1_19_years + thinness_5_9_years),
+model_developing <- lm(Life.expectancy ~ (Alcohol + BMI + Schooling +  percentage.expenditure + GDP + Income.composition.of.resources + HIV.AIDS +   thinness.10.19.years + thinness.5.9.years),
                        data = developing)
 summary(model_developing)
 residualPlot(model_developing, main = "Residual Plot of the Developing Model")
